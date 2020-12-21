@@ -90,6 +90,50 @@
 <pre><code class="python-repl">&gt;&gt;&gt; fs.create_feature('weather.actuals', source='NOAA GFS')
 </code></pre></div>
 </dd>
+<dt id="bytehub.core.FeatureStore.create_transform"><code class="name flex">
+<span>def <span class="ident">create_transform</span></span>(<span>self, name, func, transform_type='simple', params={}, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds a transform to the feature store.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Transform name.</dd>
+<dt><strong><code>func</code></strong> :&ensp;<code>function</code></dt>
+<dd>A function or lambda, which defines the feature transformation.</dd>
+<dt><strong><code>transform_type</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Type of transform: either 'simple' or 'dataframe'.</dd>
+<dt><strong><code>params</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>A dictionary of {"name": default_value} pairs, which may be passed to the transform function.</dd>
+<dt><strong><code>kwargs</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>Data to be added to metadata.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.create_transform('extract-x', lambda x: x['value'].get('x'))
+</code></pre></div>
+</dd>
+<dt id="bytehub.core.FeatureStore.create_virtual_feature"><code class="name flex">
+<span>def <span class="ident">create_virtual_feature</span></span>(<span>self, name, transform, derived_from, params={}, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds a virtual feature to the feature store.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>feature</code></strong> :&ensp;<code>str</code></dt>
+<dd>Feature name.</dd>
+<dt><strong><code>transform</code></strong> :&ensp;<code>str</code></dt>
+<dd>Transform name (must be defined already in the feature store)</dd>
+<dt><strong><code>derived_from</code></strong> :&ensp;<code>str</code> or <code>list[str]</code></dt>
+<dd>Feature(s) from which this virtual feature derives from</dd>
+<dt><strong><code>params</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>Optional dictionary of kwargs to be passed to the transform</dd>
+<dt><strong><code>kwargs</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>Data to be added to metadata.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.create_virtual_feature('weather.actuals', source='NOAA GFS')
+</code></pre></div>
+</dd>
 <dt id="bytehub.core.FeatureStore.delete_feature"><code class="name flex">
 <span>def <span class="ident">delete_feature</span></span>(<span>self, name)</span>
 </code></dt>
@@ -102,6 +146,20 @@
 </dl>
 <h2 id="examples">Examples</h2>
 <pre><code class="python-repl">&gt;&gt;&gt; fs.delete_feature('weather.actuals')
+</code></pre></div>
+</dd>
+<dt id="bytehub.core.FeatureStore.delete_transform"><code class="name flex">
+<span>def <span class="ident">delete_transform</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Deletes a transform from the feature store.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>feature</code></strong> :&ensp;<code>str</code></dt>
+<dd>Transform name.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.delete_transform('extract-x')
 </code></pre></div>
 </dd>
 <dt id="bytehub.core.FeatureStore.feature_exists"><code class="name flex">
@@ -229,7 +287,7 @@
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>str</code></dt>
-<dd>Datetime freq.</dd>
+<dd>Datetime freq in units of Pandas offset aliases, <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases">https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases</a></dd>
 </dl>
 <h2 id="examples">Examples</h2>
 <pre><code class="python-repl">&gt;&gt;&gt; fs.get_freq('weather.actual')
@@ -260,7 +318,7 @@
 </code></pre></div>
 </dd>
 <dt id="bytehub.core.FeatureStore.get_timeseries"><code class="name flex">
-<span>def <span class="ident">get_timeseries</span></span>(<span>self, feature, entity=None, from_date=None, to_date=None, freq=None)</span>
+<span>def <span class="ident">get_timeseries</span></span>(<span>self, feature, entity=None, from_date=None, to_date=None, freq=None, time_travel=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets feature timeseries from feature store.</p>
@@ -277,7 +335,9 @@ a feature in the list isn't to be filtered by entity, include an empty list ([])
 <dt><strong><code>to_date</code></strong> :&ensp;<code>str</code>, optional</dt>
 <dd>A datetime string.</dd>
 <dt><strong><code>freq</code></strong> :&ensp;<code>str</code>, optional</dt>
-<dd>A freq string using pandas/datetime conventions, e.g. '1H'.</dd>
+<dd>A freq string using pandas offset aliases, <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases,">https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases,</a> e.g. '1H'.</dd>
+<dt><strong><code>time_travel</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>A freq string using pandas offset aliases, <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases,">https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases,</a> e.g. '-3H'.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -288,6 +348,72 @@ a feature in the list isn't to be filtered by entity, include an empty list ([])
 <pre><code class="python-repl">&gt;&gt;&gt; fs.get_timeseries('weather', entity='London', from_date='2020-01-01 9:00', to_date='2020-01-01 17:00', freq='1H')
 </code></pre></div>
 </dd>
+<dt id="bytehub.core.FeatureStore.get_transform_data_frame"><code class="name flex">
+<span>def <span class="ident">get_transform_data_frame</span></span>(<span>self, transform=None, regex=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get a dataframe of transform metadata.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>transform</code></strong> :&ensp;<code>str</code> or <code>list[str]</code></dt>
+<dd>A transform or list of transforms.</dd>
+<dt><strong><code>regex</code></strong> :&ensp;<code>str</code></dt>
+<dd>A regex to filter results with</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pd.DataFrame</code></dt>
+<dd>A dataframe containing transform metadata</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.get_transform_data_frame(['transform1', 'transform2'])
+    id                                      name         description      transform_type   metadata
+---------------------------------------------------------------------------------------------------
+0   0341bacc-e161-11ea-a042-0a53e92ebe18    transform1   Transform 1      simple           {}
+1   193177cc-e158-11ea-a042-0a53e92ebe18    transform2   Transform 2      dataframe        {}
+</code></pre></div>
+</dd>
+<dt id="bytehub.core.FeatureStore.get_transform_func"><code class="name flex">
+<span>def <span class="ident">get_transform_func</span></span>(<span>self, transform)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the function for transform.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>transform</code></strong> :&ensp;<code>str</code></dt>
+<dd>A transform or list of transforms.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>function</code> or <code>list[function]</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.get_transform_func(['transform1', 'transform2'])
+    [&lt;function&gt;, &lt;function&gt;]
+</code></pre></div>
+</dd>
+<dt id="bytehub.core.FeatureStore.get_transform_id"><code class="name flex">
+<span>def <span class="ident">get_transform_id</span></span>(<span>self, transform)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the unique id number of transform(s).</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>transform</code></strong> :&ensp;<code>str</code> or <code>list[str]</code></dt>
+<dd>A transform or list of transforms.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code> or <code>list[str]</code></dt>
+<dd>Ids for the transform(s).</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.get_transform_id(['transform1', 'transform2'])
+['0341bacc-e161-11ea-a042-0a53e92ebe18',
+'193177cc-e158-11ea-a042-0a53e92ebe18']
+</code></pre></div>
+</dd>
 <dt id="bytehub.core.FeatureStore.list_features"><code class="name flex">
 <span>def <span class="ident">list_features</span></span>(<span>self, feature=None, regex=None, metadata=False)</span>
 </code></dt>
@@ -296,7 +422,7 @@ a feature in the list isn't to be filtered by entity, include an empty list ([])
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>feature</code></strong> :&ensp;<code>str</code> or <code>list[str]</code>, optional</dt>
-<dd>Only return these feaures.</dd>
+<dd>Only return these features.</dd>
 <dt><strong><code>regex</code></strong> :&ensp;<code>str</code>, optional</dt>
 <dd>Regular expression to filter feature names.</dd>
 <dt><strong><code>metadata</code></strong> :&ensp;<code>bool</code>, default <code>False</code></dt>
@@ -317,6 +443,35 @@ a feature in the list isn't to be filtered by entity, include an empty list ([])
 0   weather.actual  {'source': 'NOAA GFS'}
 </code></pre></div>
 </dd>
+<dt id="bytehub.core.FeatureStore.list_transforms"><code class="name flex">
+<span>def <span class="ident">list_transforms</span></span>(<span>self, transform=None, regex=None, metadata=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>List transforms in feature store.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>transform</code></strong> :&ensp;<code>str</code> or <code>list[str]</code>, optional</dt>
+<dd>Only return these transforms.</dd>
+<dt><strong><code>regex</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Regular expression to filter transform names.</dd>
+<dt><strong><code>metadata</code></strong> :&ensp;<code>bool</code>, default <code>False</code></dt>
+<dd>Return metadata with transform.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list[str]</code> or <code>pd.DataFrame</code></dt>
+<dd>A list of transforms or dataframe of transforms and metadata.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.list_transforms()
+</code></pre>
+<p>['transform1', 'transform2', 'transform3']</p>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.list_transforms(regex='extract.', metadata=True)
+    name            metadata
+------------------------------------------
+0   extract-keys  {'source': 'NOAA GFS'}
+</code></pre></div>
+</dd>
 <dt id="bytehub.core.FeatureStore.save_timeseries"><code class="name flex">
 <span>def <span class="ident">save_timeseries</span></span>(<span>self, feature, df)</span>
 </code></dt>
@@ -335,6 +490,84 @@ Optionally can contain columns: entity, created_time.</dd>
 <pre><code class="python-repl">&gt;&gt;&gt; fs.save_timeseries('weather.actual', df)
 </code></pre></div>
 </dd>
+<dt id="bytehub.core.FeatureStore.split"><code class="name flex">
+<span>def <span class="ident">split</span></span>(<span>target, past, future, include_time, horizon, initial, period, offset, max_train_size, cutoffs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates train, validate, test splits for forecasting
+models. The splits can be based on historical cutoff points, which user
+can input. If not provided, begins from (end - horizon) and works
+backwards, making cutoffs with a spacing of period until initial is
+reached.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>target</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dict containing features and timeseries to include as target,
+e.g. {"feature1" : "timeseries1", "feature2" : "timeseries2"&hellip;}.
+The combined target will to be split into train, test, validation
+timeseries.</dd>
+<dt><strong><code>past</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dict containing input features and timeseries, usually
+historic actuals, to include in train split,
+e.g. {"feature1" : "timeseries1", "feature2" : "timeseries2"&hellip;}.</dd>
+<dt><strong><code>future</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>Dict containing input features and timeseries, usually forecasts,
+to include in test and validation splits,
+e.g. {"feature1" : "timeseries1", "feature2" : "timeseries2"&hellip;}.</dd>
+<dt><strong><code>include_time</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>Boolean indicating whether to include "time", e.g. timeseries
+timestamps, in inputs.</dd>
+<dt><strong><code>horizon</code></strong> :&ensp;<code>pd.Timedelta</code>, optional</dt>
+<dd>string with pd.Timedelta compatible style, e.g., '5 days',
+'3 hours', '10 seconds'. Lookahead period of intended forecasts.</dd>
+<dt><strong><code>initial</code></strong> :&ensp;<code>pd.Timedelta</code>, optional</dt>
+<dd>string with pd.Timedelta compatible style. The first training
+period will include at least this much data. If not provided,
+3 * horizon is used.</dd>
+<dt><strong><code>period</code></strong> :&ensp;<code>pd.Timedelta</code>, optional</dt>
+<dd>string with pd.Timedelta compatible style. Intend forecasts to be
+done every this period. If not provided, 0.5 * horizon is used.</dd>
+<dt><strong><code>offset</code></strong> :&ensp;<code>pd.Timedelta</code>, default <code>"1{freq}"</code></dt>
+<dd>string with pd.Timedelta compatible style. Period betweeen end of
+train set and start of test set. If not provided, "1{freq}".</dd>
+<dt><strong><code>max_train_size</code></strong> :&ensp;<code>pd.Timedelta</code>, optional</dt>
+<dd>string with pd.Timedelta compatible style. Maximum size for a single
+training set. If not provided, train set grows for each generated
+timeseries without limit.</dd>
+<dt><strong><code>cutoffs</code></strong> :&ensp;<code>list[pd.Timestamp]</code>, optional</dt>
+<dd>list of pd.Timestamp specifying train set end timestamps.
+If not provided, they are generated as described above.</dd>
+</dl>
+<h2 id="yields">Yields</h2>
+<dl>
+<dt><strong><code>train</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>train set.</dd>
+<dt><strong><code>validation</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>validation set.</dd>
+<dt><strong><code>test</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>test set.</dd>
+</dl></div>
+</dd>
+<dt id="bytehub.core.FeatureStore.transform_exists"><code class="name flex">
+<span>def <span class="ident">transform_exists</span></span>(<span>self, transform)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check whether transform(s) exist.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>transform</code></strong> :&ensp;<code>str</code> or <code>list[str]</code></dt>
+<dd>A transform or list of transform.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code> or <code>list[bool]</code></dt>
+<dd>A boolean or list of booleans indicating whether transform(s) exist.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.transform_exists(['transform1', 'nonsense'])
+[True, False]
+</code></pre></div>
+</dd>
 <dt id="bytehub.core.FeatureStore.update_feature"><code class="name flex">
 <span>def <span class="ident">update_feature</span></span>(<span>self, name, **kwargs)</span>
 </code></dt>
@@ -349,6 +582,28 @@ Optionally can contain columns: entity, created_time.</dd>
 </dl>
 <h2 id="examples">Examples</h2>
 <pre><code class="python-repl">&gt;&gt;&gt; fs.update_feature('weather.actuals', source='NOAA GFS')
+</code></pre></div>
+</dd>
+<dt id="bytehub.core.FeatureStore.update_transform"><code class="name flex">
+<span>def <span class="ident">update_transform</span></span>(<span>self, name, func=None, transform_type=None, params=None, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update a transform in the feature store.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>feature</code></strong> :&ensp;<code>str</code></dt>
+<dd>Feature name.</dd>
+<dt><strong><code>func</code></strong> :&ensp;<code>function</code>, optional</dt>
+<dd>A function or lambda, which defines the feature transformation.</dd>
+<dt><strong><code>transform_type</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Type of transform: either 'simple' or 'dataframe'.</dd>
+<dt><strong><code>params</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>A dictionary of {"name": default_value} pairs, which may be passed to the transform function.</dd>
+<dt><strong><code>kwargs</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>Data to be added to metadata.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; fs.update_transform('extract-x', transform_type='dataframe')
 </code></pre></div>
 </dd>
 </dl>
@@ -374,7 +629,10 @@ Optionally can contain columns: entity, created_time.</dd>
 <ul class="">
 <li><code><a title="bytehub.core.FeatureStore.create_feature" href="#bytehub.core.FeatureStore.create_feature">create_feature</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.create_feature_group" href="#bytehub.core.FeatureStore.create_feature_group">create_feature_group</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.create_transform" href="#bytehub.core.FeatureStore.create_transform">create_transform</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.create_virtual_feature" href="#bytehub.core.FeatureStore.create_virtual_feature">create_virtual_feature</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.delete_feature" href="#bytehub.core.FeatureStore.delete_feature">delete_feature</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.delete_transform" href="#bytehub.core.FeatureStore.delete_transform">delete_transform</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.feature_exists" href="#bytehub.core.FeatureStore.feature_exists">feature_exists</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.get_feature_data_frame" href="#bytehub.core.FeatureStore.get_feature_data_frame">get_feature_data_frame</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.get_feature_id" href="#bytehub.core.FeatureStore.get_feature_id">get_feature_id</a></code></li>
@@ -383,9 +641,16 @@ Optionally can contain columns: entity, created_time.</dd>
 <li><code><a title="bytehub.core.FeatureStore.get_freq" href="#bytehub.core.FeatureStore.get_freq">get_freq</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.get_last" href="#bytehub.core.FeatureStore.get_last">get_last</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.get_timeseries" href="#bytehub.core.FeatureStore.get_timeseries">get_timeseries</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.get_transform_data_frame" href="#bytehub.core.FeatureStore.get_transform_data_frame">get_transform_data_frame</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.get_transform_func" href="#bytehub.core.FeatureStore.get_transform_func">get_transform_func</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.get_transform_id" href="#bytehub.core.FeatureStore.get_transform_id">get_transform_id</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.list_features" href="#bytehub.core.FeatureStore.list_features">list_features</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.list_transforms" href="#bytehub.core.FeatureStore.list_transforms">list_transforms</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.save_timeseries" href="#bytehub.core.FeatureStore.save_timeseries">save_timeseries</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.split" href="#bytehub.core.FeatureStore.split">split</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.transform_exists" href="#bytehub.core.FeatureStore.transform_exists">transform_exists</a></code></li>
 <li><code><a title="bytehub.core.FeatureStore.update_feature" href="#bytehub.core.FeatureStore.update_feature">update_feature</a></code></li>
+<li><code><a title="bytehub.core.FeatureStore.update_transform" href="#bytehub.core.FeatureStore.update_transform">update_transform</a></code></li>
 </ul>
 </li>
 </ul>
